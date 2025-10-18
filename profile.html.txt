@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Socials — Shareable QR</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; display:flex; gap:24px; padding:24px; align-items:flex-start; flex-wrap:wrap; }
+    .card { border:1px solid #e3e3e3; padding:18px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.04); width:320px; }
+    .profile { display:flex; gap:12px; align-items:center; }
+    .avatar { width:64px; height:64px; border-radius:12px; background:#ddd; display:inline-flex; align-items:center; justify-content:center; font-weight:700; }
+    .list a { display:block; margin:6px 0; text-decoration:none; color:#0366d6; }
+    #qrcode { margin-top:12px; }
+    button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#0366d6; color:white; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="card">
+    <div class="profile">
+      <div class="avatar">SG</div>
+      <div>
+        <div style="font-weight:700">Sanjana Garika</div>
+        <div style="font-size:0.9em; color:#666">Scan to see my socials</div>
+      </div>
+    </div>
+
+    <div class="list" id="linksList"></div>
+
+    <div style="margin-top:12px;">
+      <button id="downloadBtn">Download QR</button>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <h3>QR Code</h3>
+    <div id="qrcode"></div>
+  </div>
+
+<script>
+const accounts = {
+  "Instagram": "https://instagram.com/yourusername",
+  "LinkedIn": "https://linkedin.com/in/yourusername",
+  "GitHub": "https://github.com/yourusername",
+  "Twitter": "https://twitter.com/yourusername",
+  "YouTube": "https://youtube.com/@yourusername"
+};
+
+const linksList = document.getElementById('linksList');
+for (const [name, url] of Object.entries(accounts)) {
+  const a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.textContent = `🔗 ${name}`;
+  linksList.appendChild(a);
+}
+
+const qrcodeEl = document.getElementById('qrcode');
+new QRCode(qrcodeEl, { text: location.href, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.H });
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const img = qrcodeEl.querySelector('img');
+  const a = document.createElement('a');
+  a.href = img.src; a.download = 'my_socials_qr.png'; a.click();
+});
+</script>
+</body>
+</html>

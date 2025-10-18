@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QR Scanner — Show Socials</title>
+  <style>
+    body { font-family: system-ui; padding:18px; }
+    #reader { width:100%; max-width:480px; margin: 0 auto; }
+    #results { margin-top:18px; }
+  </style>
+  <script src="https://unpkg.com/html5-qrcode@2.3.7/minified/html5-qrcode.min.js"></script>
+</head>
+<body>
+  <h2>QR Scanner</h2>
+  <div id="reader"></div>
+  <div id="results"></div>
+<script>
+const results = document.getElementById('results');
+function handleDecodedText(text) {
+  results.innerHTML = '';
+  try {
+    const j = JSON.parse(text);
+    if (j && j.type === 'social_list' && j.accounts) {
+      for (const [n,u] of Object.entries(j.accounts)) {
+        const div = document.createElement('div');
+        div.innerHTML = `<a href="${u}" target="_blank">${n}</a>`;
+        results.appendChild(div);
+      }
+      return;
+    }
+  } catch(e){}
+  if (/^https?:/.test(text)) {
+    results.innerHTML = `<p>Scanned URL: <a href="${text}" target="_blank">${text}</a></p>`;
+  } else {
+    results.textContent = text;
+  }
+}
+const html5QrCode = new Html5Qrcode("reader");
+Html5Qrcode.getCameras().then(cameras => {
+  const camId = cameras && cameras.length ? cameras[0].id : null;
+  if (camId) {
+    html5QrCode.start(camId, { fps: 10, qrbox: 250 },
+      (decodedText) => {
+        html5QrCode.stop().then(()=>handleDecodedText(decodedText));
+      });
+  } else {
+    results.textContent = 'No camera found.';
+  }
+});
+</script>
+</body>
+</html>
